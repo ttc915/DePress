@@ -1,6 +1,6 @@
-import { Analytics } from "@vercel/analytics/next"
 import { AppLayout } from '@/components/app-layout'
 import { AppProviders } from '@/components/app-providers'
+import { Analytics } from '@vercel/analytics/next'
 import type { Metadata } from 'next'
 import React from 'react'
 import './globals.css'
