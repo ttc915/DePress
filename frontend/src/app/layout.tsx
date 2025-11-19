@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next"
 import { AppLayout } from '@/components/app-layout'
 import { AppProviders } from '@/components/app-providers'
 import type { Metadata } from 'next'
@@ -15,6 +16,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body className={`antialiased`}>
         <AppProviders>
           <AppLayout>{children}</AppLayout>
+          <Analytics />
         </AppProviders>
       </body>
     </html>
