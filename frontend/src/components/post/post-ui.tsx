@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import Link from 'next/link'
 import {
   useAddComment,
   useAddPost,
@@ -159,7 +160,9 @@ export function PostList() {
             return (
               <div key={postKey} className="p-6 bg-card rounded-lg border shadow-sm">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-medium">{post.topic}</h3>
+                  <Link href={`/post/${postKey}`}>
+                    <h3 className="font-medium cursor-pointer hover:underline">{post.topic}</h3>
+                  </Link>
                   <Button
                     variant="destructive"
                     size="sm"
@@ -197,7 +200,7 @@ export function PostList() {
   )
 }
 
-function CommentsSection({ postPubkey }: { postPubkey: import('@solana/web3.js').PublicKey }) {
+export function CommentsSection({ postPubkey }: { postPubkey: import('@solana/web3.js').PublicKey }) {
   const { publicKey } = useWallet()
   const { data: comments, isLoading, isError } = useGetComments(postPubkey)
   const addComment = useAddComment()
