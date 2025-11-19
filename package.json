@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "anchor:build": "cd anchor_project && anchor build",
+    "test": "cd anchor_project && anchor test",
+    "idl:copy": "cp anchor_project/target/idl/depress.json frontend/lib/idl.json",
+    "build:full": "pnpm anchor:build && pnpm idl:copy"
+  }
+}

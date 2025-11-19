@@ -1,0 +1,63 @@
+{
+  "address": "65eB9Pni2mbcafm3juEZgoN3P52CNwbnSKFChBy14K7D",
+  "metadata": {
+    "name": "depress",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "initialize",
+      "discriminator": [
+        175,
+        175,
+        109,
+        31,
+        13,
+        152,
+        155,
+        237
+      ],
+      "accounts": [],
+      "args": []
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "TopicTooLong",
+      "msg": "Cannot initialize, topic too long"
+    },
+    {
+      "code": 6001,
+      "name": "ContentTooLong",
+      "msg": "Cannot initialize, content too long"
+    },
+    {
+      "code": 6002,
+      "name": "MaxLikesReached",
+      "msg": "Maximum number of Likes Reached"
+    },
+    {
+      "code": 6003,
+      "name": "MaxDislikesReached",
+      "msg": "Maximum number of Dislikes Reached"
+    },
+    {
+      "code": 6004,
+      "name": "MinLikesReached",
+      "msg": "Minimum number of Likes Reached"
+    },
+    {
+      "code": 6005,
+      "name": "MinDislikesReached",
+      "msg": "Minimum number of Dislikes Reached"
+    },
+    {
+      "code": 6006,
+      "name": "CommentTooLong",
+      "msg": "Comment too Long"
+    }
+  ]
+}

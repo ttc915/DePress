@@ -11,5 +11,6 @@ pub struct Post {
     pub content: String,
     pub likes: u64,
     pub dislikes: u64,
+    pub comment_count: u32,
     pub bump: u8,
 }
