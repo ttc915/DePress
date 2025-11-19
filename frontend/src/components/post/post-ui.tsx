@@ -2,9 +2,9 @@
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useState } from 'react'
+import { toast } from 'sonner'
 import {
   useAddComment,
   useAddPost,
@@ -24,13 +24,25 @@ export function PostCreate() {
   const [topic, setTopic] = useState('')
   const [content, setContent] = useState('')
   const addPost = useAddPost()
+  const { data: posts } = useGetPosts()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!topic.trim() || !content.trim()) return
 
+    const trimmedTopic = topic.trim()
+    const trimmedContent = content.trim()
+
+    // Check if post with same topic already exists
+    const existingPost = posts?.find((post) => post.topic === trimmedTopic)
+
+    if (existingPost) {
+      toast.error('A post with this topic already exists')
+      return
+    }
+
     try {
-      await addPost.mutateAsync({ topic: topic.trim(), content: content.trim() })
+      await addPost.mutateAsync({ topic: trimmedTopic, content: trimmedContent })
       setTopic('')
       setContent('')
     } catch (error) {
@@ -39,11 +51,10 @@ export function PostCreate() {
   }
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-card rounded-lg border shadow-sm">
+    <div className="max-w-2xl mx-auto p-6 bg-card rounded-lg border shadow-sm">
       <h2 className="text-lg font-semibold mb-4">Create New Post</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <Label htmlFor="topic">Topic</Label>
           <Input
             id="topic"
             value={topic}
@@ -54,7 +65,6 @@ export function PostCreate() {
           />
         </div>
         <div>
-          <Label htmlFor="content">Content</Label>
           <textarea
             id="content"
             value={content}
@@ -130,15 +140,15 @@ export function PostList() {
   const isEmpty = !posts || posts.length === 0
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
+    <div className="max-w-2xl mx-auto">
       <h2 className="text-lg font-semibold mb-4">Posts</h2>
       <div className="space-y-4">
         {isLoading ? (
-          <div className="p-4 bg-card rounded-lg border">
+          <div className="p-6 bg-card rounded-lg border">
             <p className="text-muted-foreground">Loading posts...</p>
           </div>
         ) : isError || isEmpty ? (
-          <div className="p-4 bg-card rounded-lg border">
+          <div className="p-6 bg-card rounded-lg border">
             <p className="text-muted-foreground">No posts yet. Create your first post above!</p>
           </div>
         ) : (
@@ -147,7 +157,7 @@ export function PostList() {
             const isReacting = reactingPubkey === postKey
 
             return (
-              <div key={postKey} className="p-4 bg-card rounded-lg border shadow-sm">
+              <div key={postKey} className="p-6 bg-card rounded-lg border shadow-sm">
                 <div className="flex justify-between items-start mb-2">
                   <h3 className="font-medium">{post.topic}</h3>
                   <Button
@@ -161,16 +171,12 @@ export function PostList() {
                 </div>
                 <p className="text-sm text-muted-foreground mb-2">By: {post.author.toBase58()}</p>
                 <p className="text-sm mb-2">{post.content}</p>
-                <div className="flex items-center gap-2 text-sm">
-                  <span>👍 {post.likes}</span>
-                  <span>👎 {post.dislikes}</span>
-                </div>
                 <div className="mt-2 flex gap-2">
                   <Button variant="outline" size="sm" onClick={() => handleLike(postKey)} disabled={isReacting}>
-                    {isReacting && likePost.isPending ? 'Liking...' : 'Like'}
+                    {isReacting && likePost.isPending ? 'Liking...' : `Like (${post.likes})`}
                   </Button>
                   <Button variant="outline" size="sm" onClick={() => handleDislike(postKey)} disabled={isReacting}>
-                    {isReacting && dislikePost.isPending ? 'Disliking...' : 'Dislike'}
+                    {isReacting && dislikePost.isPending ? 'Disliking...' : `Dislike (${post.dislikes})`}
                   </Button>
                   <Button
                     variant="outline"
@@ -207,8 +213,19 @@ function CommentsSection({ postPubkey }: { postPubkey: import('@solana/web3.js')
     e.preventDefault()
     if (!content.trim()) return
 
+    // Check if comment with same content already exists from this user
+    const trimmedContent = content.trim()
+    const existingComment = comments?.find(
+      (comment) => comment.content === trimmedContent && publicKey && comment.author.equals(publicKey),
+    )
+
+    if (existingComment) {
+      toast.error('A comment with this content already exists')
+      return
+    }
+
     try {
-      await addComment.mutateAsync({ postPubkey, content: content.trim() })
+      await addComment.mutateAsync({ postPubkey, content: trimmedContent })
       setContent('')
     } catch (error) {
       console.error('Failed to add comment:', error)
@@ -300,10 +317,6 @@ function CommentsSection({ postPubkey }: { postPubkey: import('@solana/web3.js')
                     </Button>
                   )}
                 </div>
-                <div className="flex items-center gap-2 text-xs mb-1">
-                  <span>👍 {comment.likes}</span>
-                  <span>👎 {comment.dislikes}</span>
-                </div>
                 <div className="flex gap-1">
                   <Button
                     variant="outline"
@@ -312,7 +325,7 @@ function CommentsSection({ postPubkey }: { postPubkey: import('@solana/web3.js')
                     onClick={() => handleLikeComment(commentKey)}
                     disabled={isReacting}
                   >
-                    {isReacting && likeComment.isPending ? '...' : '👍'}
+                    {isReacting && likeComment.isPending ? '...' : `Like (${comment.likes})`}
                   </Button>
                   <Button
                     variant="outline"
@@ -321,7 +334,7 @@ function CommentsSection({ postPubkey }: { postPubkey: import('@solana/web3.js')
                     onClick={() => handleDislikeComment(commentKey)}
                     disabled={isReacting}
                   >
-                    {isReacting && dislikeComment.isPending ? '...' : '👎'}
+                    {isReacting && dislikeComment.isPending ? '...' : `Dislike (${comment.dislikes})`}
                   </Button>
                   <Button
                     variant="outline"
@@ -343,8 +356,8 @@ function CommentsSection({ postPubkey }: { postPubkey: import('@solana/web3.js')
         <Input
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="Add a comment (max 500 chars)"
-          maxLength={500}
+          placeholder="Add a comment (max 100 chars)"
+          maxLength={100}
         />
         <Button type="submit" size="sm" disabled={addComment.isPending || !content.trim()}>
           {addComment.isPending ? 'Posting...' : 'Comment'}

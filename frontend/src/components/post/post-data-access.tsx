@@ -106,10 +106,21 @@ export function useAddPost() {
       }).compileToLegacyMessage()
 
       const transaction = new VersionedTransaction(message)
-      const signature = await wallet.sendTransaction(transaction, connection)
-      await connection.confirmTransaction(signature, 'confirmed')
 
-      return signature
+      try {
+        const signature = await wallet.sendTransaction(transaction, connection)
+        await connection.confirmTransaction(signature, 'confirmed')
+        return signature
+      } catch (error: unknown) {
+        // Check if it's an account already exists error
+        if (
+          error instanceof Error &&
+          (error.message?.includes('Account already exists') || error.message?.includes('already in use'))
+        ) {
+          throw new Error('A post with this topic already exists')
+        }
+        throw error
+      }
     },
     onSuccess: () => {
       toast.success('Post created successfully!')
@@ -484,10 +495,21 @@ export function useAddComment() {
       }).compileToLegacyMessage()
 
       const transaction = new VersionedTransaction(message)
-      const signature = await wallet.sendTransaction(transaction, connection)
-      await connection.confirmTransaction(signature, 'confirmed')
 
-      return { signature, postPubkey: input.postPubkey }
+      try {
+        const signature = await wallet.sendTransaction(transaction, connection)
+        await connection.confirmTransaction(signature, 'confirmed')
+        return { signature, postPubkey: input.postPubkey }
+      } catch (error: unknown) {
+        // Check if it's an account already exists error
+        if (
+          error instanceof Error &&
+          (error.message?.includes('Account already exists') || error.message?.includes('already in use'))
+        ) {
+          throw new Error('A comment with this content already exists')
+        }
+        throw error
+      }
     },
     onSuccess: (_data, variables) => {
       toast.success('Comment added successfully!')

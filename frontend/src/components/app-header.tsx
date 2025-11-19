@@ -8,7 +8,7 @@ import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { ClusterUiSelect } from './cluster/cluster-ui'
 
-export function AppHeader({ links = [] }: { links: { label: string; path: string }[] }) {
+export function AppHeader({ links = [] }: { links?: { label: string; path: string }[] }) {
   const pathname = usePathname()
   const [showMenu, setShowMenu] = useState(false)
 
