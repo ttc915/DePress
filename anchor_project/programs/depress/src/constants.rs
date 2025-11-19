@@ -4,8 +4,7 @@ pub const DISCRIMINATOR: usize = 8;
 // Content length
 pub const TOPIC_LENGTH: usize = 32;
 pub const CONTENT_LENGTH: usize = 500;
-pub const COMMENT_LENGTH: usize = 500;
-pub const MAX_COMMENTS_PER_POST: usize = 100;
+pub const COMMENT_LENGTH: usize = 100;
 
 // PDA seeds
 pub const POST_SEED: &str = "POST_SEED";
