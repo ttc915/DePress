@@ -1,14 +1,13 @@
 # Project Description
 
-**Deployed Frontend URL:** [TODO: Link to your deployed frontend]
+**Deployed Frontend URL:** https://depress.vercel.app/
 
-**Solana Program ID:** [TODO: Your deployed program's public key]
+**Solana Program ID:** 65eB9Pni2mbcafm3juEZgoN3P52CNwbnSKFChBy14K7D
 
 ## Project Overview
 
 ### Description
 
-[TODO: Provide a comprehensive description of your dApp. Explain what it does. Be detailed about the core functionality.]
 A decentralized publishing platform application built on Solana. Users can create and publish their own content.
 
 ### Key Features
